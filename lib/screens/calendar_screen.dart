@@ -37,44 +37,219 @@ class _MonthHeader extends StatelessWidget {
         color: AppColors.navyDark,
         border: Border(bottom: BorderSide(color: AppColors.divider)),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      child: Row(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      child: Column(
         children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left, color: AppColors.gold, size: 30),
-            onPressed: p.prevMonth,
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                Text(
-                  '${d.year}年${d.month}月',
-                  style: const TextStyle(
-                    color: AppColors.gold,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
+          // ── 上段：年移動 ──────────────────────────────
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 前年ボタン
+              IconButton(
+                icon: const Icon(Icons.keyboard_double_arrow_left,
+                    color: AppColors.gold, size: 22),
+                tooltip: '前年',
+                onPressed: p.prevYear,
+              ),
+              // 年タップ → 年選択ダイアログ
+              GestureDetector(
+                onTap: () => _showYearPicker(context, p),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.navyMid,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.gold, width: 1),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${d.year}年',
+                        style: const TextStyle(
+                          color: AppColors.gold,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.arrow_drop_down,
+                          color: AppColors.gold, size: 20),
+                    ],
                   ),
                 ),
-                Text(
-                  wareki,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 13,
-                    letterSpacing: 1.0,
+              ),
+              // 翌年ボタン
+              IconButton(
+                icon: const Icon(Icons.keyboard_double_arrow_right,
+                    color: AppColors.gold, size: 22),
+                tooltip: '翌年',
+                onPressed: p.nextYear,
+              ),
+              // 今日ボタン
+              IconButton(
+                icon: const Icon(Icons.today, color: AppColors.gold, size: 22),
+                tooltip: '今日',
+                onPressed: p.goToToday,
+              ),
+            ],
+          ),
+          // ── 下段：月移動 ──────────────────────────────
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.chevron_left,
+                    color: AppColors.gold, size: 28),
+                onPressed: p.prevMonth,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Text(
+                      '${d.month}月',
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    Text(
+                      wareki,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.chevron_right,
+                    color: AppColors.gold, size: 28),
+                onPressed: p.nextMonth,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 年選択ダイアログ
+  void _showYearPicker(BuildContext context, AppProvider p) {
+    final currentYear = p.focusedMonth.year;
+    final today = DateTime.now().year;
+    // 表示範囲: 現在年 -10 〜 +10
+    final years =
+        List.generate(21, (i) => today - 10 + i);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.navyDark,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          '年を選択',
+          style: TextStyle(color: AppColors.gold, fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+        content: SizedBox(
+          width: 220,
+          height: 320,
+          child: ListView.builder(
+            itemCount: years.length,
+            itemBuilder: (_, i) {
+              final y = years[i];
+              final isSelected = y == currentYear;
+              final isToday = y == today;
+              final w = JapaneseCalendar.seirekiToWareki(y);
+              final warekiStr =
+                  w != null ? '${w.era}${w.year == 1 ? "元" : w.year.toString()}年' : '';
+              return InkWell(
+                onTap: () {
+                  p.goToYear(y);
+                  Navigator.of(ctx).pop();
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.gold.withValues(alpha: 0.2)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                    border: isSelected
+                        ? Border.all(color: AppColors.gold, width: 1.5)
+                        : null,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '$y年',
+                              style: TextStyle(
+                                color: isSelected
+                                    ? AppColors.gold
+                                    : AppColors.textPrimary,
+                                fontSize: 16,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                            if (warekiStr.isNotEmpty)
+                              Text(
+                                warekiStr,
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 11,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (isToday)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.gold.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            '今年',
+                            style: TextStyle(
+                                color: AppColors.gold, fontSize: 10),
+                          ),
+                        ),
+                      if (isSelected)
+                        const Padding(
+                          padding: EdgeInsets.only(left: 6),
+                          child: Icon(Icons.check,
+                              color: AppColors.gold, size: 16),
+                        ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              );
+            },
           ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right, color: AppColors.gold, size: 30),
-            onPressed: p.nextMonth,
-          ),
-          IconButton(
-            icon: const Icon(Icons.today, color: AppColors.gold, size: 24),
-            onPressed: p.goToToday,
-            tooltip: '今日',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('キャンセル',
+                style: TextStyle(color: AppColors.textSecondary)),
           ),
         ],
       ),
@@ -122,8 +297,9 @@ class _CalendarGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.watch<AppProvider>();
     final today = DateTime.now();
-    final firstDay = p.focusedMonth;
+    final firstDay = DateTime(p.focusedMonth.year, p.focusedMonth.month, 1);
     final daysInMonth = DateTime(firstDay.year, firstDay.month + 1, 0).day;
+    // DateTime.weekday: 1=月〜6=土, 7=日 → %7 で 日=0, 月=1, ..., 土=6
     final startWeekday = firstDay.weekday % 7; // 日曜=0
     final holidays = HolidayCalculator.getHolidays(firstDay.year);
     final showRokuyou = p.showRokuyou;

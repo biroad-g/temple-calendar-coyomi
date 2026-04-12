@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/app_theme.dart';
 
 class AppProvider extends ChangeNotifier {
-  DateTime _focusedMonth = DateTime.now();
+  DateTime _focusedMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
   DateTime? _selectedDate;
   DateTime? _birthDate;
   DateTime? _deathDate;
@@ -128,6 +128,28 @@ class AppProvider extends ChangeNotifier {
         d.month == 12 ? d.year + 1 : d.year,
         d.month == 12 ? 1 : d.month + 1,
         1);
+    notifyListeners();
+  }
+
+  void prevYear() {
+    final d = _focusedMonth;
+    _focusedMonth = DateTime(d.year - 1, d.month, 1);
+    notifyListeners();
+  }
+
+  void nextYear() {
+    final d = _focusedMonth;
+    _focusedMonth = DateTime(d.year + 1, d.month, 1);
+    notifyListeners();
+  }
+
+  void goToYear(int year) {
+    _focusedMonth = DateTime(year, _focusedMonth.month, 1);
+    notifyListeners();
+  }
+
+  void goToYearMonth(int year, int month) {
+    _focusedMonth = DateTime(year, month, 1);
     notifyListeners();
   }
 

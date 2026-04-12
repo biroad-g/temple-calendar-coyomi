@@ -34,6 +34,39 @@ class JapaneseCalendar {
 
   static String _weekStr(int w) =>
       ['月', '火', '水', '木', '金', '土', '日'][w - 1];
+
+  // 元号名一覧（ドロップダウン用）
+  static List<String> get eraNames =>
+      _eraList.map((e) => e.name).toList();
+
+  // 元号→西暦変換: 元号名・和暦年 → 西暦年（nullなら変換不可）
+  static int? warekiToSeireki(String eraName, int warekiYear) {
+    for (final e in _eraList) {
+      if (e.name == eraName) {
+        return e.start.year + warekiYear - 1;
+      }
+    }
+    return null;
+  }
+
+  // 元号の開始年（1年 = 元年）を取得
+  static int? eraStartYear(String eraName) {
+    for (final e in _eraList) {
+      if (e.name == eraName) return e.start.year;
+    }
+    return null;
+  }
+
+  // 西暦年から元号名と和暦年を取得
+  static ({String era, int year})? seirekiToWareki(int seireki) {
+    for (int i = _eraList.length - 1; i >= 0; i--) {
+      final e = _eraList[i];
+      if (seireki >= e.start.year) {
+        return (era: e.name, year: seireki - e.start.year + 1);
+      }
+    }
+    return null;
+  }
 }
 
 // ══════════════════════════════════════════════════════
