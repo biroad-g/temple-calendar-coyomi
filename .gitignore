@@ -30,9 +30,10 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-# /build/ ← Vercel連携のため build/web のみ追跡対象にする
+# build/web のみGit管理対象（Vercel連携用）
 /build/
 !/build/web/
+!/build/web/**
 /coverage/
 
 # Symbolication related
