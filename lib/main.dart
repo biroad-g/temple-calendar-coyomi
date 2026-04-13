@@ -13,7 +13,8 @@ void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.dark,   // 和紙は明るい背景なので dark アイコン
+    statusBarBrightness: Brightness.light,
   ));
   runApp(
     ChangeNotifierProvider(
@@ -80,7 +81,7 @@ class _MainShellState extends State<_MainShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.navy,
+      backgroundColor: AppColors.washi,
       body: SafeArea(
         child: IndexedStack(
           index: _currentIndex,
@@ -89,7 +90,7 @@ class _MainShellState extends State<_MainShell> {
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.divider, width: 0.5)),
+          border: Border(top: BorderSide(color: AppColors.divider, width: 1.0)),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,

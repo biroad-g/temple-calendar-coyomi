@@ -118,10 +118,10 @@ class _AgeScreenState extends State<AgeScreen>
     final today = DateTime.now();
 
     return Scaffold(
-      backgroundColor: AppColors.navy,
+      backgroundColor: AppColors.washi,
       appBar: AppBar(
         title: const Text('年齢計算'),
-        backgroundColor: AppColors.navyDark,
+        backgroundColor: AppColors.washiDark,
         bottom: TabBar(
           controller: _tabCtrl,
           indicatorColor: AppColors.gold,
@@ -236,11 +236,11 @@ class _AgeScreenState extends State<AgeScreen>
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
             child: Row(
               children: [
-                Icon(icon, color: AppColors.gold, size: 18),
+                Icon(icon, color: AppColors.vermillion, size: 18),
                 const SizedBox(width: 8),
                 Text(title,
                     style: const TextStyle(
-                        color: AppColors.gold,
+                        color: AppColors.vermillion,
                         fontSize: 14,
                         fontWeight: FontWeight.bold)),
               ],
@@ -295,14 +295,14 @@ class _SeirekiInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.navyDark,
+      color: AppColors.cardBg,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('生年月日（西暦）',
               style: TextStyle(
-                  color: AppColors.gold,
+                  color: AppColors.vermillion,
                   fontSize: 12,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
@@ -366,14 +366,14 @@ class _WarekiInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final eras = JapaneseCalendar.eraNames;
     return Container(
-      color: AppColors.navyDark,
+      color: AppColors.cardBg,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('生年月日（和暦）',
               style: TextStyle(
-                  color: AppColors.gold,
+                  color: AppColors.vermillion,
                   fontSize: 12,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
@@ -383,14 +383,14 @@ class _WarekiInput extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.navyMid,
+                  color: AppColors.washiDark,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: AppColors.navyLight),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: selectedEra,
-                    dropdownColor: AppColors.navyDark,
+                    dropdownColor: AppColors.washiDark,
                     style: const TextStyle(
                         color: AppColors.textPrimary, fontSize: 15),
                     items: eras
@@ -431,7 +431,7 @@ class _WarekiInput extends StatelessWidget {
         controller: c,
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+        style: const TextStyle(color: AppColors.sumi, fontSize: 15),
         decoration: InputDecoration(
           labelText: label,
           contentPadding:
@@ -479,11 +479,11 @@ class _LongevityTable extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: isCurrent
-                ? AppColors.gold.withValues(alpha: 0.15)
-                : AppColors.navyMid,
+                ? AppColors.vermillion.withValues(alpha: 0.15)
+                : AppColors.washiDark,
             borderRadius: BorderRadius.circular(8),
             border: isCurrent
-                ? Border.all(color: AppColors.gold, width: 1.5)
+                ? Border.all(color: AppColors.vermillion, width: 1.5)
                 : Border.all(color: AppColors.divider),
           ),
           child: Row(
@@ -532,7 +532,7 @@ class _LongevityTable extends StatelessWidget {
               if (isCurrent)
                 const Padding(
                   padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.star, color: AppColors.gold, size: 16),
+                  child: Icon(Icons.star, color: AppColors.vermillion, size: 16),
                 ),
             ],
           ),

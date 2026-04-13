@@ -11,7 +11,7 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.navy,
+      backgroundColor: AppColors.washi,
       body: Column(
         children: [
           _MonthHeader(),
@@ -33,9 +33,18 @@ class _MonthHeader extends StatelessWidget {
     final wareki = JapaneseCalendar.toWareki(d);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.navyDark,
-        border: Border(bottom: BorderSide(color: AppColors.divider)),
+      decoration: BoxDecoration(
+        color: AppColors.washiDeep,
+        border: Border(
+          bottom: BorderSide(color: AppColors.divider, width: 1.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.sumiLight.withValues(alpha: 0.15),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Column(
@@ -44,23 +53,27 @@ class _MonthHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 前年ボタン
               IconButton(
                 icon: const Icon(Icons.keyboard_double_arrow_left,
-                    color: AppColors.gold, size: 22),
+                    color: AppColors.vermillion, size: 22),
                 tooltip: '前年',
                 onPressed: p.prevYear,
               ),
-              // 年タップ → 年選択ダイアログ
               GestureDetector(
                 onTap: () => _showYearPicker(context, p),
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.navyMid,
+                    color: AppColors.cardBg,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.gold, width: 1),
+                    border: Border.all(color: AppColors.vermillion, width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.vermillion.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -68,29 +81,28 @@ class _MonthHeader extends StatelessWidget {
                       Text(
                         '${d.year}年',
                         style: const TextStyle(
-                          color: AppColors.gold,
-                          fontSize: 18,
+                          color: AppColors.vermillion,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 2),
                       const Icon(Icons.arrow_drop_down,
-                          color: AppColors.gold, size: 20),
+                          color: AppColors.vermillion, size: 20),
                     ],
                   ),
                 ),
               ),
-              // 翌年ボタン
               IconButton(
                 icon: const Icon(Icons.keyboard_double_arrow_right,
-                    color: AppColors.gold, size: 22),
+                    color: AppColors.vermillion, size: 22),
                 tooltip: '翌年',
                 onPressed: p.nextYear,
               ),
-              // 今日ボタン
               IconButton(
-                icon: const Icon(Icons.today, color: AppColors.gold, size: 22),
+                icon: const Icon(Icons.today,
+                    color: AppColors.vermillion, size: 22),
                 tooltip: '今日',
                 onPressed: p.goToToday,
               ),
@@ -101,7 +113,7 @@ class _MonthHeader extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.chevron_left,
-                    color: AppColors.gold, size: 28),
+                    color: AppColors.sumiMid, size: 28),
                 onPressed: p.prevMonth,
               ),
               Expanded(
@@ -110,16 +122,16 @@ class _MonthHeader extends StatelessWidget {
                     Text(
                       '${d.month}月',
                       style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 20,
+                        color: AppColors.sumi,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                        letterSpacing: 2.0,
                       ),
                     ),
                     Text(
                       wareki,
                       style: const TextStyle(
-                        color: AppColors.textSecondary,
+                        color: AppColors.sumiMid,
                         fontSize: 12,
                         letterSpacing: 1.0,
                       ),
@@ -129,7 +141,7 @@ class _MonthHeader extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.chevron_right,
-                    color: AppColors.gold, size: 28),
+                    color: AppColors.sumiMid, size: 28),
                 onPressed: p.nextMonth,
               ),
             ],
@@ -139,27 +151,30 @@ class _MonthHeader extends StatelessWidget {
     );
   }
 
-  // 年選択ダイアログ
   void _showYearPicker(BuildContext context, AppProvider p) {
     final currentYear = p.focusedMonth.year;
     final today = DateTime.now().year;
-    // 表示範囲: 現在年 -10 〜 +10
-    final years =
-        List.generate(21, (i) => today - 10 + i);
+    final years = List.generate(21, (i) => today - 10 + i);
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.navyDark,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: AppColors.cardBg,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.divider),
+        ),
         title: const Text(
           '年を選択',
-          style: TextStyle(color: AppColors.gold, fontSize: 16),
+          style: TextStyle(
+              color: AppColors.sumi,
+              fontSize: 16,
+              fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         contentPadding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
         content: SizedBox(
-          width: 220,
+          width: 240,
           height: 320,
           child: ListView.builder(
             itemCount: years.length,
@@ -168,13 +183,15 @@ class _MonthHeader extends StatelessWidget {
               final isSelected = y == currentYear;
               final isToday = y == today;
               final w = JapaneseCalendar.seirekiToWareki(y);
-              final warekiStr =
-                  w != null ? '${w.era}${w.year == 1 ? "元" : w.year.toString()}年' : '';
+              final warekiStr = w != null
+                  ? '${w.era}${w.year == 1 ? "元" : w.year.toString()}年'
+                  : '';
               return InkWell(
                 onTap: () {
                   p.goToYear(y);
                   Navigator.of(ctx).pop();
                 },
+                borderRadius: BorderRadius.circular(10),
                 child: Container(
                   margin: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 3),
@@ -182,11 +199,12 @@ class _MonthHeader extends StatelessWidget {
                       horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppColors.gold.withValues(alpha: 0.2)
+                        ? AppColors.vermillion.withValues(alpha: 0.1)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(10),
                     border: isSelected
-                        ? Border.all(color: AppColors.gold, width: 1.5)
+                        ? Border.all(
+                            color: AppColors.vermillion, width: 1.5)
                         : null,
                   ),
                   child: Row(
@@ -199,8 +217,8 @@ class _MonthHeader extends StatelessWidget {
                               '$y年',
                               style: TextStyle(
                                 color: isSelected
-                                    ? AppColors.gold
-                                    : AppColors.textPrimary,
+                                    ? AppColors.vermillion
+                                    : AppColors.sumi,
                                 fontSize: 16,
                                 fontWeight: isSelected
                                     ? FontWeight.bold
@@ -211,7 +229,7 @@ class _MonthHeader extends StatelessWidget {
                               Text(
                                 warekiStr,
                                 style: const TextStyle(
-                                  color: AppColors.textSecondary,
+                                  color: AppColors.sumiLight,
                                   fontSize: 11,
                                 ),
                               ),
@@ -225,18 +243,20 @@ class _MonthHeader extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: AppColors.gold.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: AppColors.gold, width: 0.8),
                           ),
-                          child: const Text(
-                            '今年',
-                            style: TextStyle(
-                                color: AppColors.gold, fontSize: 10),
-                          ),
+                          child: const Text('今年',
+                              style: TextStyle(
+                                  color: AppColors.goldDark,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold)),
                         ),
                       if (isSelected)
                         const Padding(
                           padding: EdgeInsets.only(left: 6),
                           child: Icon(Icons.check,
-                              color: AppColors.gold, size: 16),
+                              color: AppColors.vermillion, size: 16),
                         ),
                     ],
                   ),
@@ -249,7 +269,7 @@ class _MonthHeader extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('キャンセル',
-                style: TextStyle(color: AppColors.textSecondary)),
+                style: TextStyle(color: AppColors.sumiLight)),
           ),
         ],
       ),
@@ -264,7 +284,7 @@ class _WeekdayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.navyDark,
+      color: AppColors.washiDark,
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(
         children: List.generate(7, (i) {
@@ -272,14 +292,14 @@ class _WeekdayRow extends StatelessWidget {
               ? AppColors.sundayColor
               : i == 6
                   ? AppColors.saturdayColor
-                  : AppColors.textSecondary;
+                  : AppColors.sumiMid;
           return Expanded(
             child: Center(
               child: Text(
                 _days[i],
                 style: TextStyle(
                   color: c,
-                  fontSize: 14,   // ← 大きく
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -297,10 +317,11 @@ class _CalendarGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.watch<AppProvider>();
     final today = DateTime.now();
-    final firstDay = DateTime(p.focusedMonth.year, p.focusedMonth.month, 1);
-    final daysInMonth = DateTime(firstDay.year, firstDay.month + 1, 0).day;
-    // DateTime.weekday: 1=月〜6=土, 7=日 → %7 で 日=0, 月=1, ..., 土=6
-    final startWeekday = firstDay.weekday % 7; // 日曜=0
+    final firstDay =
+        DateTime(p.focusedMonth.year, p.focusedMonth.month, 1);
+    final daysInMonth =
+        DateTime(firstDay.year, firstDay.month + 1, 0).day;
+    final startWeekday = firstDay.weekday % 7;
     final holidays = HolidayCalculator.getHolidays(firstDay.year);
     final showRokuyou = p.showRokuyou;
 
@@ -311,7 +332,8 @@ class _CalendarGrid extends StatelessWidget {
     for (int d = 1; d <= daysInMonth; d++) {
       final date = DateTime(firstDay.year, firstDay.month, d);
       final weekIndex = (startWeekday + d - 1) % 7;
-      final holiday = holidays[DateTime(firstDay.year, firstDay.month, d)];
+      final holiday =
+          holidays[DateTime(firstDay.year, firstDay.month, d)];
       final isToday = date.year == today.year &&
           date.month == today.month &&
           date.day == today.day;
@@ -320,10 +342,10 @@ class _CalendarGrid extends StatelessWidget {
           p.selectedDate!.month == date.month &&
           p.selectedDate!.day == date.day;
 
-      // 六曜: 全体ON & 個別ON の場合のみ表示
       RokuyouEnum? roku;
       if (showRokuyou) {
-        final r = RokuyouCalculator.rokuyou(date.year, date.month, date.day);
+        final r =
+            RokuyouCalculator.rokuyou(date.year, date.month, date.day);
         if (p.isRokuyouVisible(r)) roku = r;
       }
 
@@ -341,22 +363,26 @@ class _CalendarGrid extends StatelessWidget {
       cells.add(const _DayCell(day: 0, weekIndex: 0));
     }
 
-    return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
-        childAspectRatio: 0.72,  // 少し縦長にして文字スペース確保
+    return Container(
+      color: AppColors.washi,
+      child: GridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7,
+          childAspectRatio: 0.72,
+        ),
+        itemCount: cells.length,
+        itemBuilder: (_, i) {
+          final cell = cells[i];
+          if (cell.day == 0) return const SizedBox();
+          return GestureDetector(
+            onTap: () =>
+                context.read<AppProvider>().setSelectedDate(cell.date),
+            child: _DayCellWidget(cell: cell),
+          );
+        },
       ),
-      itemCount: cells.length,
-      itemBuilder: (_, i) {
-        final cell = cells[i];
-        if (cell.day == 0) return const SizedBox();
-        return GestureDetector(
-          onTap: () => context.read<AppProvider>().setSelectedDate(cell.date),
-          child: _DayCellWidget(cell: cell),
-        );
-      },
     );
   }
 }
@@ -393,54 +419,53 @@ class _DayCellWidget extends StatelessWidget {
     } else if (cell.weekIndex == 6) {
       textColor = AppColors.saturdayColor;
     } else {
-      textColor = AppColors.textPrimary;
+      textColor = AppColors.sumi;
     }
 
     return Container(
       margin: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         color: cell.isSelected
-            ? AppColors.navyLight
+            ? AppColors.vermillion.withValues(alpha: 0.12)
             : cell.isToday
-                ? AppColors.gold.withValues(alpha: 0.15)
+                ? AppColors.gold.withValues(alpha: 0.18)
                 : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: cell.isToday
-            ? Border.all(color: AppColors.gold, width: 1.5)
+            ? Border.all(color: AppColors.gold, width: 1.8)
             : cell.isSelected
-                ? Border.all(color: AppColors.goldLight, width: 1)
+                ? Border.all(color: AppColors.vermillion, width: 1.2)
                 : null,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 日付数字 ← 大きく
           Text(
             '${cell.day}',
             style: TextStyle(
-              color: cell.isToday ? AppColors.goldLight : textColor,
-              fontSize: 18,           // 15 → 18
-              fontWeight: cell.isToday ? FontWeight.bold : FontWeight.w500,
+              color: cell.isToday ? AppColors.goldDark : textColor,
+              fontSize: 18,
+              fontWeight: cell.isToday
+                  ? FontWeight.bold
+                  : FontWeight.w500,
             ),
           ),
-          // 六曜 ← 大きく
           if (cell.rokuyou != null)
             Text(
               cell.rokuyou!.label,
               style: TextStyle(
                 color: cell.rokuyou!.color,
-                fontSize: 11,         // 9 → 11
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          // 祝日ドット
           if (cell.holiday != null)
             Container(
               width: 5,
               height: 5,
               margin: const EdgeInsets.only(top: 1),
               decoration: const BoxDecoration(
-                color: AppColors.holidayRed,
+                color: AppColors.vermillion,
                 shape: BoxShape.circle,
               ),
             ),
@@ -457,13 +482,22 @@ class _DayDetailPanel extends StatelessWidget {
     final p = context.watch<AppProvider>();
     final date = p.selectedDate ?? DateTime.now();
     final holiday = HolidayCalculator.getHoliday(date);
-    final roku = RokuyouCalculator.rokuyou(date.year, date.month, date.day);
+    final roku =
+        RokuyouCalculator.rokuyou(date.year, date.month, date.day);
     final wareki = JapaneseCalendar.toWareki(date);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.cardBg,
-        border: Border(top: BorderSide(color: AppColors.divider)),
+      decoration: BoxDecoration(
+        color: AppColors.washiDeep,
+        border: Border(
+            top: BorderSide(color: AppColors.divider, width: 1.5)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.sumiLight.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
       child: Column(
@@ -479,26 +513,28 @@ class _DayDetailPanel extends StatelessWidget {
                     Text(
                       '${date.month}月${date.day}日',
                       style: const TextStyle(
-                        color: AppColors.gold,
-                        fontSize: 24,   // ← 大きく
+                        color: AppColors.sumi,
+                        fontSize: 26,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: 1.0,
                       ),
                     ),
                     Text(
                       wareki,
                       style: const TextStyle(
-                        color: AppColors.textSecondary,
+                        color: AppColors.sumiMid,
                         fontSize: 13,
                       ),
                     ),
                   ],
                 ),
               ),
-              // 六曜バッジ（詳細パネルは常に全種表示）
+              // 六曜バッジ
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: roku.color.withValues(alpha: 0.2),
+                  color: roku.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: roku.color, width: 1.5),
                 ),
@@ -508,13 +544,15 @@ class _DayDetailPanel extends StatelessWidget {
                       roku.label,
                       style: TextStyle(
                         color: roku.color,
-                        fontSize: 18,   // ← 大きく
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       roku.short,
-                      style: TextStyle(color: roku.color, fontSize: 10),
+                      style: TextStyle(
+                          color: roku.color.withValues(alpha: 0.8),
+                          fontSize: 10),
                     ),
                   ],
                 ),
@@ -522,24 +560,26 @@ class _DayDetailPanel extends StatelessWidget {
             ],
           ),
           if (holiday != null) ...[
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 12, vertical: 5),
               decoration: BoxDecoration(
-                color: AppColors.holidayRed.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(6),
+                color: AppColors.vermillion.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: AppColors.holidayRed.withValues(alpha: 0.5)),
+                    color: AppColors.vermillion.withValues(alpha: 0.4)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.flag, color: AppColors.holidayRed, size: 14),
+                  const Icon(Icons.flag,
+                      color: AppColors.vermillion, size: 14),
                   const SizedBox(width: 4),
                   Text(
                     holiday.name,
                     style: const TextStyle(
-                      color: AppColors.holidayRed,
+                      color: AppColors.vermillion,
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                     ),

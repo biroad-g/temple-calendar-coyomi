@@ -10,10 +10,10 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.watch<AppProvider>();
     return Scaffold(
-      backgroundColor: AppColors.navy,
+      backgroundColor: AppColors.washi,
       appBar: AppBar(
         title: const Text('設定'),
-        backgroundColor: AppColors.navyDark,
+        backgroundColor: AppColors.washiDark,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -39,7 +39,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   value: p.showRokuyou,
                   onChanged: (v) => p.setShowRokuyou(v),
-                  activeThumbColor: AppColors.gold,
+                  activeThumbColor: AppColors.vermillion,
                 ),
               ],
             ),
@@ -141,7 +141,7 @@ class SettingsScreen extends StatelessWidget {
                         child: Text(
                           year,
                           style: const TextStyle(
-                              color: AppColors.gold,
+                              color: AppColors.vermillion,
                               fontSize: 12,
                               fontWeight: FontWeight.bold),
                         ),
@@ -226,7 +226,7 @@ class _RokuyouToggleItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: isVisible && isEnabled
                   ? roku.color.withValues(alpha: 0.2)
-                  : AppColors.navyMid,
+                  : AppColors.washiDark,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: isVisible && isEnabled
@@ -309,12 +309,12 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.gold, size: 16),
+        Icon(icon, color: AppColors.vermillion, size: 16),
         const SizedBox(width: 8),
         Text(
           title,
           style: const TextStyle(
-            color: AppColors.gold,
+            color: AppColors.vermillion,
             fontSize: 13,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,

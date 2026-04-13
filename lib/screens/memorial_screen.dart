@@ -118,10 +118,10 @@ class _MemorialScreenState extends State<MemorialScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.navy,
+      backgroundColor: AppColors.washi,
       appBar: AppBar(
         title: const Text('法事計算'),
-        backgroundColor: AppColors.navyDark,
+        backgroundColor: AppColors.washiDark,
         bottom: TabBar(
           controller: _inputTab,
           indicatorColor: AppColors.gold,
@@ -164,7 +164,7 @@ class _MemorialScreenState extends State<MemorialScreen>
           // 年忌/中陰タブ切り替え
           if (_death != null)
             Container(
-              color: AppColors.navyDark,
+              color: AppColors.cardBg,
               child: TabBar(
                 controller: _resultTab,
                 indicatorColor: AppColors.gold,
@@ -215,14 +215,14 @@ class _SeirekiDeathInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.navyDark,
+      color: AppColors.cardBg,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('命日（西暦）',
               style: TextStyle(
-                  color: AppColors.gold,
+                  color: AppColors.vermillion,
                   fontSize: 12,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -261,7 +261,7 @@ class _SeirekiDeathInput extends StatelessWidget {
         controller: c,
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+        style: const TextStyle(color: AppColors.sumi, fontSize: 15),
         decoration: InputDecoration(
           labelText: label,
           contentPadding:
@@ -294,14 +294,14 @@ class _WarekiDeathInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final eras = JapaneseCalendar.eraNames;
     return Container(
-      color: AppColors.navyDark,
+      color: AppColors.cardBg,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('命日（和暦）',
               style: TextStyle(
-                  color: AppColors.gold,
+                  color: AppColors.vermillion,
                   fontSize: 12,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -310,14 +310,14 @@ class _WarekiDeathInput extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.navyMid,
+                  color: AppColors.washiDark,
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: AppColors.navyLight),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: selectedEra,
-                    dropdownColor: AppColors.navyDark,
+                    dropdownColor: AppColors.washiDark,
                     style: const TextStyle(
                         color: AppColors.textPrimary, fontSize: 15),
                     items: eras
@@ -364,7 +364,7 @@ class _WarekiDeathInput extends StatelessWidget {
         controller: c,
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+        style: const TextStyle(color: AppColors.sumi, fontSize: 15),
         decoration: InputDecoration(
           labelText: label,
           contentPadding:
@@ -486,7 +486,7 @@ class _MemorialTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: isHighlight
-            ? AppColors.gold.withValues(alpha: 0.12)
+            ? AppColors.vermillion.withValues(alpha: 0.12)
             : AppColors.cardBg,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
@@ -501,8 +501,8 @@ class _MemorialTile extends StatelessWidget {
           height: 42,
           decoration: BoxDecoration(
             color: isHighlight
-                ? AppColors.gold.withValues(alpha: 0.2)
-                : AppColors.navyMid,
+                ? AppColors.vermillion.withValues(alpha: 0.2)
+                : AppColors.washiDark,
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -543,7 +543,7 @@ class _MemorialTile extends StatelessWidget {
                 color: AppColors.textDisabled, size: 18)
             : isHighlight
                 ? const Icon(Icons.notifications_active,
-                    color: AppColors.gold, size: 18)
+                    color: AppColors.vermillion, size: 18)
                 : const Icon(Icons.arrow_forward_ios,
                     color: AppColors.textDisabled, size: 14),
       ),
