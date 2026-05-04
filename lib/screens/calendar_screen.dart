@@ -5,20 +5,100 @@ import '../core/rokuyou_calculator.dart';
 import '../core/japanese_calendar.dart';
 import '../providers/app_provider.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
+
+  @override
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  late PageController _pageController;
+  // 基準インデックス: 大きな値を中心にして前後に余裕を持たせる
+  static const int _initialPage = 1200;
+  // 基準月 (index=1200 に対応する月)
+  late DateTime _basemonth;
+  bool _isPageChanging = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final p = context.read<AppProvider>();
+    _basemonth = DateTime(p.focusedMonth.year, p.focusedMonth.month, 1);
+    _pageController = PageController(initialPage: _initialPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  // インデックス → 月を計算
+  DateTime _monthForIndex(int index) {
+    final diff = index - _initialPage;
+    int year = _basemonth.year;
+    int month = _basemonth.month + diff;
+    while (month > 12) { month -= 12; year++; }
+    while (month < 1)  { month += 12; year--; }
+    return DateTime(year, month, 1);
+  }
+
+  // AppProviderの focusedMonth → インデックスを計算
+  int _indexForMonth(DateTime month) {
+    final diffMonths = (month.year - _basemonth.year) * 12
+        + (month.month - _basemonth.month);
+    return _initialPage + diffMonths;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.washi,
-      body: Column(
-        children: [
-          _MonthHeader(),
-          _WeekdayRow(),
-          Expanded(child: _CalendarGrid()),
-          _DayDetailPanel(),
-        ],
+      body: Consumer<AppProvider>(
+        builder: (context, p, _) {
+          // Provider側でfocusedMonthが変わったらPageViewを同期
+          final targetIndex = _indexForMonth(p.focusedMonth);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!_isPageChanging &&
+                _pageController.hasClients &&
+                _pageController.page?.round() != targetIndex) {
+              _pageController.animateToPage(
+                targetIndex,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          });
+
+          return Column(
+            children: [
+              _MonthHeader(),
+              _WeekdayRow(),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    _isPageChanging = true;
+                    final newMonth = _monthForIndex(index);
+                    p.goToYearMonth(newMonth.year, newMonth.month);
+                    Future.delayed(const Duration(milliseconds: 350), () {
+                      if (mounted) _isPageChanging = false;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    final month = _monthForIndex(index);
+                    return _CalendarGrid(
+                      year: month.year,
+                      month: month.month,
+                    );
+                  },
+                ),
+              ),
+              _DayDetailPanel(),
+            ],
+          );
+        },
       ),
     );
   }
@@ -311,18 +391,21 @@ class _WeekdayRow extends StatelessWidget {
   }
 }
 
-// ── カレンダーグリッド ───────────────────────────────
+// ── カレンダーグリッド (年・月を引数で受け取る) ──────
 class _CalendarGrid extends StatelessWidget {
+  final int year;
+  final int month;
+
+  const _CalendarGrid({required this.year, required this.month});
+
   @override
   Widget build(BuildContext context) {
     final p = context.watch<AppProvider>();
     final today = DateTime.now();
-    final firstDay =
-        DateTime(p.focusedMonth.year, p.focusedMonth.month, 1);
-    final daysInMonth =
-        DateTime(firstDay.year, firstDay.month + 1, 0).day;
+    final firstDay = DateTime(year, month, 1);
+    final daysInMonth = DateTime(year, month + 1, 0).day;
     final startWeekday = firstDay.weekday % 7;
-    final holidays = HolidayCalculator.getHolidays(firstDay.year);
+    final holidays = HolidayCalculator.getHolidays(year);
     final showRokuyou = p.showRokuyou;
 
     final cells = <_DayCell>[];
@@ -330,10 +413,9 @@ class _CalendarGrid extends StatelessWidget {
       cells.add(const _DayCell(day: 0, weekIndex: 0));
     }
     for (int d = 1; d <= daysInMonth; d++) {
-      final date = DateTime(firstDay.year, firstDay.month, d);
+      final date = DateTime(year, month, d);
       final weekIndex = (startWeekday + d - 1) % 7;
-      final holiday =
-          holidays[DateTime(firstDay.year, firstDay.month, d)];
+      final holiday = holidays[DateTime(year, month, d)];
       final isToday = date.year == today.year &&
           date.month == today.month &&
           date.day == today.day;
@@ -344,8 +426,7 @@ class _CalendarGrid extends StatelessWidget {
 
       RokuyouEnum? roku;
       if (showRokuyou) {
-        final r =
-            RokuyouCalculator.rokuyou(date.year, date.month, date.day);
+        final r = RokuyouCalculator.rokuyou(date.year, date.month, date.day);
         if (p.isRokuyouVisible(r)) roku = r;
       }
 
