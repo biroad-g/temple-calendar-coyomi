@@ -263,7 +263,7 @@ class _RokuyouToggleItem extends StatelessWidget {
             child: Switch(
               value: isVisible,
               onChanged: isEnabled ? onChanged : null,
-              activeColor: roku.color,
+              activeThumbColor: roku.color,
               activeTrackColor: roku.color.withValues(alpha: 0.35),
               inactiveThumbColor: AppColors.textDisabled,
               inactiveTrackColor: AppColors.navyLight,
