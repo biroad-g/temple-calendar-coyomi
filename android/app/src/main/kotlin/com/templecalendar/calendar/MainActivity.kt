@@ -1,5 +1,6 @@
-package com.templecalendar.temple_calendar
+package com.templecalendar.calendar
 
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity : FlutterActivity()
+
