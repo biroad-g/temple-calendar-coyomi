@@ -60,6 +60,7 @@ class AppTheme {
   static ThemeData get theme {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'NotoSansJP', // オフラインでも表示できるよう同梱フォントを使用
       brightness: Brightness.light,
       colorScheme: const ColorScheme.light(
         primary:     AppColors.vermillion,
